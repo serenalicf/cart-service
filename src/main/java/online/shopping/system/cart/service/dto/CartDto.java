@@ -15,6 +15,6 @@ public class CartDto {
     private int cartId;
     private BigDecimal totalPrice;
     private int customerId;
-    private List<CartItemDto> cartItemList;
+    private List<CartItemDto> items;
 
 }
