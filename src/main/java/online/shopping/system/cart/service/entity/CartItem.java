@@ -54,4 +54,7 @@ public class CartItem {
     @ManyToOne
     private Cart cart;
 
+    @Column(name = "total_price")
+    private int totalPrice;
+
 }
