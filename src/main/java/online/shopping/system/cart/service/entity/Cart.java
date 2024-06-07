@@ -1,4 +1,4 @@
-package online.shopping.system.cart.service.dao;
+package online.shopping.system.cart.service.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
