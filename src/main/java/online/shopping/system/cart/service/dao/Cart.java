@@ -51,6 +51,6 @@ public class Cart {
     private LocalDateTime lastModifiedOn;
 
     @OneToMany(mappedBy = "cart")
-    private List<CartItem> cartItemList;
+    private List<CartItem> items;
 
 }
