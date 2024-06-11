@@ -1,4 +1,4 @@
-package online.shopping.system.cart.service;
+package online.shopping.system.cart_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
