@@ -1,4 +1,4 @@
-package online.shopping.system.cart.service.dto;
+package online.shopping.system.cart_service.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Builder
 public class ProductDto {
 
-    private int productId;
+    private String productId;
     private String productCode;
     private String name;
     private String description;

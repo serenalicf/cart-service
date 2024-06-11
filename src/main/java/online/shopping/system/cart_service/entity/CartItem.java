@@ -1,4 +1,4 @@
-package online.shopping.system.cart.service.entity;
+package online.shopping.system.cart_service.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,7 +39,7 @@ public class CartItem {
     private int price;
 
     @Column(name = "product_id")
-    private int productId;
+    private String productId;
 
     @Column(name = "created_on")
     @CreatedDate
