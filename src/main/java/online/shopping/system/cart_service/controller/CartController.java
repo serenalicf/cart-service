@@ -1,6 +1,8 @@
 package online.shopping.system.cart_service.controller;
 
 import online.shopping.system.cart_service.dto.CartDto;
+import online.shopping.system.cart_service.entity.Cart;
+import online.shopping.system.cart_service.mapper.CartMapper;
 import online.shopping.system.cart_service.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -20,12 +22,13 @@ public class CartController {
 
     @PostMapping("/{customerId}/carts")
     public CartDto createCart(@Validated @PathVariable("customerId") String customerId) {
-        return cartService.createCart(customerId);
+        Cart cart = cartService.createCart(customerId);
+        return CartMapper.INSTANCE.cartToCartDto(cart);
     }
 
     @GetMapping("/{customerId}/latestcart")
-    public CartDto getCart(@Validated @PathVariable("customerId") String customerId) {
-        return cartService.getCart(customerId);
+    public CartDto getLatestCart(@Validated @PathVariable("customerId") String customerId) {
+        return cartService.getLatestCart(customerId);
     }
 
 }

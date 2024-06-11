@@ -1,10 +1,11 @@
 package online.shopping.system.cart_service.service;
 
 import online.shopping.system.cart_service.dto.CartDto;
+import online.shopping.system.cart_service.entity.Cart;
 
 public interface CartService {
 
-    CartDto createCart(String customerId);
+    Cart createCart(String customerId);
 
-    CartDto getCart(String customerId);
+    CartDto getLatestCart(String customerId);
 }
