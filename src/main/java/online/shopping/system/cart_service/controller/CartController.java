@@ -21,14 +21,15 @@ public class CartController {
     private CartService cartService;
 
     @PostMapping("/{customerId}/carts")
-    public CartDto createCart(@Validated @PathVariable("customerId") String customerId) {
+    public CartDto createCart(@Validated @PathVariable("customerId") String customerId) throws Exception {
         Cart cart = cartService.createCart(customerId);
         return CartMapper.INSTANCE.cartToCartDto(cart);
     }
 
     @GetMapping("/{customerId}/latestcart")
-    public CartDto getLatestCart(@Validated @PathVariable("customerId") String customerId) {
-        return cartService.getLatestCart(customerId);
+    public CartDto getLatestCart(@Validated @PathVariable("customerId") String customerId) throws Exception {
+        Cart cart = cartService.getLatestCart(customerId);
+        return CartMapper.INSTANCE.cartToCartDto(cart);
     }
 
 }

@@ -2,6 +2,7 @@ package online.shopping.system.cart_service.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -32,13 +34,13 @@ public class Cart {
     @Column(name = "cart_id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cartId;
+    private Integer cartId;
 
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
     @Column(name = "customer_id")
-    private String customerId;
+    private Integer customerId;
 
     @Column(name = "created_on")
     @CreatedDate

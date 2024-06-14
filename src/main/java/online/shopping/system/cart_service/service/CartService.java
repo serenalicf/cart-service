@@ -7,5 +7,5 @@ public interface CartService {
 
     Cart createCart(String customerId);
 
-    CartDto getLatestCart(String customerId);
+    Cart getLatestCart(String customerId) throws Exception;
 }
