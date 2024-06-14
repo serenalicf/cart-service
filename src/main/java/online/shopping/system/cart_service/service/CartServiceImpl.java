@@ -54,13 +54,17 @@ public class CartServiceImpl implements CartService{
         try {
             //call customer api
             CustomerDto customer = customerService.getCustomer(customerId);
+
             if (customer == null) {
                 throw new CustomerNotFoundException(customerId);
             }
 
             return cartRepository.findFirstByCustomerIdOrderByLastModifiedOnDesc(Integer.parseInt(customerId)).orElse(null);
 
-        } catch (Exception ex ){
+        } catch (CustomerNotFoundException cnfex){
+            throw cnfex;
+        }
+        catch (Exception ex ){
             throw new RuntimeException(ex);
         }
     }
