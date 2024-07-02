@@ -148,7 +148,7 @@ public class CartServiceImpl implements CartService{
                 addCartItemResponseDto.setItemId(cartItem.getItemId());
                 addCartItemResponseDto.setQuantity(cartItem.getQuantity());
             }
-            cartRepository.save(cart);
+            calulateCart(cart);
             addCartItemResponseDto.setStatusCode(AddCartStatusCode.SUCCESS.name());
             return addCartItemResponseDto;
         } catch (Exception ex){
@@ -161,5 +161,17 @@ public class CartServiceImpl implements CartService{
             log.error(ex.getMessage(), ex);
             throw new BusinessException(ErrorCode.SYSTEM_BUSY);
         }
+    }
+
+    public void calulateCart(Cart cart){
+        //loop the cart items to calulate total price for the cart, update the total price for the cart
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for(CartItem item : cart.getItems()){
+            totalPrice = totalPrice.add(item.getTotalPrice());
+        }
+        cart.setTotalPrice(totalPrice);
+        // save the cart
+        cartRepository.save(cart);
+
     }
 }
