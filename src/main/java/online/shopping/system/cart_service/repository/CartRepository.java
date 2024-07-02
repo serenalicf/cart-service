@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface CartRepository extends JpaRepository<Cart, Integer>, JpaSpecificationExecutor<Cart> {
 
     Optional<Cart> findFirstByCustomerIdOrderByLastModifiedOnDesc(Integer customerId);
+
+    Optional<Cart> findByCartIdAndCustomerId(Integer cartId, Integer customerId);
 }

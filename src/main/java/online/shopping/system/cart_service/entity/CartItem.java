@@ -18,6 +18,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,13 +37,13 @@ public class CartItem {
     private Integer itemId;
 
     @Column(name = "quantity")
-    private int quantity;
+    private Integer quantity;
 
     @Column(name = "price")
-    private int price;
+    private BigDecimal price;
 
-    @Column(name = "product_id")
-    private Integer productId;
+    @Column(name = "product_code")
+    private String productCode;
 
     @Column(name = "created_on")
     @CreatedDate
@@ -58,6 +59,6 @@ public class CartItem {
     private Cart cart;
 
     @Column(name = "total_price")
-    private int totalPrice;
+    private BigDecimal totalPrice;
 
 }
