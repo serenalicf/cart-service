@@ -2,10 +2,8 @@ package online.shopping.system.cart_service.controller;
 
 import online.shopping.system.cart_service.dto.AddCartItemResponseDto;
 import online.shopping.system.cart_service.dto.CartDto;
-import online.shopping.system.cart_service.dto.CartItemDto;
 import online.shopping.system.cart_service.dto.CreateCartItemRequestDTO;
 import online.shopping.system.cart_service.entity.Cart;
-import online.shopping.system.cart_service.entity.CartItem;
 import online.shopping.system.cart_service.exception.BusinessException;
 import online.shopping.system.cart_service.mapper.CartMapper;
 import online.shopping.system.cart_service.service.CartService;
@@ -39,11 +37,11 @@ public class CartController {
     }
 
     @PostMapping("/{customerId}/carts/{cartId}/items")
-    public AddCartItemResponseDto addCart(@Validated @PathVariable("customerId") String customerId,
-                                          @Validated @PathVariable("cartId")String cartId,
-                                          @Validated @RequestBody CreateCartItemRequestDTO createCartItemRequestDTO) throws BusinessException {
+    public AddCartItemResponseDto addItemToCart(@Validated @PathVariable("customerId") String customerId,
+                                                @Validated @PathVariable("cartId")String cartId,
+                                                @Validated @RequestBody CreateCartItemRequestDTO createCartItemRequestDTO) throws BusinessException {
 
-        AddCartItemResponseDto cartItem = cartService.addCart(customerId, cartId, createCartItemRequestDTO);
+        AddCartItemResponseDto cartItem = cartService.addItemToCart(customerId, cartId, createCartItemRequestDTO);
         return cartItem;
     }
 

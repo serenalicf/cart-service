@@ -87,7 +87,7 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public AddCartItemResponseDto addCart(String customerId, String cartId, CreateCartItemRequestDTO createCartItemRequestDTO) throws BusinessException {
+    public AddCartItemResponseDto addItemToCart(String customerId, String cartId, CreateCartItemRequestDTO createCartItemRequestDTO) throws BusinessException {
         try {
             //call customer api
             CustomerDto customer = customerService.getCustomer(customerId);
