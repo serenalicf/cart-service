@@ -154,15 +154,17 @@ public class CartServiceImpl implements CartService{
             addCartItemResponseDto.setStatusCode(AddCartStatusCode.SUCCESS.name());
             return addCartItemResponseDto;
         } catch (Exception ex){
+            AddCartItemResponseDto addCartItemResponseDto = AddCartItemResponseDto.builder()
+                    .productCode(createCartItemRequestDTO.getProductCode())
+                    .statusCode(AddCartStatusCode.FAILED.name())
+                    .build();
             if(ex instanceof BusinessException){
-                return AddCartItemResponseDto.builder()
-                        .productCode(createCartItemRequestDTO.getProductCode())
-                        .statusCode(AddCartStatusCode.FAILED.name())
-                        .errorCode(((BusinessException) ex).getErrorCode())
-                        .build();
+                addCartItemResponseDto.setErrorCode(((BusinessException) ex).getErrorCode());
+            } else {
+                log.error(ex.getMessage(), ex);
+                addCartItemResponseDto.setErrorCode(ErrorCode.SYSTEM_BUSY.getErrorCode());
             }
-            log.error(ex.getMessage(), ex);
-            throw new BusinessException(ErrorCode.SYSTEM_BUSY);
+            return addCartItemResponseDto;
         }
     }
 
