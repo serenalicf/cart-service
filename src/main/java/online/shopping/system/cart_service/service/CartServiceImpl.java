@@ -109,7 +109,6 @@ public class CartServiceImpl implements CartService{
                 throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, createCartItemRequestDTO.getProductCode());
             }
             if (productDto.getAvailableItemCount() < createCartItemRequestDTO.getQuantity()) {
-
                 throw new BusinessException(ErrorCode.INSUFFICIENT_PRODUCT, createCartItemRequestDTO.getProductCode());
             }
 
@@ -125,7 +124,10 @@ public class CartServiceImpl implements CartService{
             //create a new cart item if cartItem is null
             Integer quantity = createCartItemRequestDTO.getQuantity();
             BigDecimal price = productDto.getPrice();
-            AddCartItemResponseDto addCartItemResponseDto = AddCartItemResponseDto.builder().quantityAdded(createCartItemRequestDTO.getQuantity()).build();
+            AddCartItemResponseDto addCartItemResponseDto = AddCartItemResponseDto.builder()
+                    .quantityAdded(createCartItemRequestDTO.getQuantity())
+                    .productCode(createCartItemRequestDTO.getProductCode())
+                    .build();
             if (cartItem == null) {
                 cartItem = CartItem.builder()
                         .productCode(createCartItemRequestDTO.getProductCode())
@@ -153,10 +155,11 @@ public class CartServiceImpl implements CartService{
             return addCartItemResponseDto;
         } catch (Exception ex){
             if(ex instanceof BusinessException){
-                AddCartItemResponseDto addCartItemResponseDto = new AddCartItemResponseDto();
-                addCartItemResponseDto.setStatusCode(AddCartStatusCode.FAILED.name());
-                addCartItemResponseDto.setErrorCode(ex.getMessage());
-                throw ex;
+                return AddCartItemResponseDto.builder()
+                        .productCode(createCartItemRequestDTO.getProductCode())
+                        .statusCode(AddCartStatusCode.FAILED.name())
+                        .errorCode(((BusinessException) ex).getErrorCode())
+                        .build();
             }
             log.error(ex.getMessage(), ex);
             throw new BusinessException(ErrorCode.SYSTEM_BUSY);

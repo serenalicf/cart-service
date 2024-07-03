@@ -18,6 +18,7 @@ public class AddCartItemResponseDto {
     private Integer itemId;
     private Integer quantity;
     private Integer quantityAdded;
+    private String productCode;
     private String statusCode;
     private String errorCode;
 
