@@ -1,6 +1,7 @@
 package online.shopping.system.cart_service.service;
 
 import lombok.extern.slf4j.Slf4j;
+import online.shopping.system.cart_service.annotation.ValidCustomer;
 import online.shopping.system.cart_service.constant.AddCartStatusCode;
 import online.shopping.system.cart_service.customer.dto.CustomerDto;
 import online.shopping.system.cart_service.customer.service.CustomerService;
@@ -68,12 +69,10 @@ public class CartServiceImpl implements CartService{
     @Override
     public Cart getLatestCart(String customerId) throws BusinessException {
         try {
-            //call customer api
-            CustomerDto customer = customerService.getCustomer(customerId);
+//            call customer api
+            CustomerDto customer = Optional.ofNullable(customerService.getCustomer(customerId))
+                    .orElseThrow(()->new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, customerId));
 
-            if (customer == null) {
-                throw new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, customerId);
-            }
 
             return cartRepository.findFirstByCustomerIdOrderByLastModifiedOnDesc(Integer.parseInt(customerId)).orElse(null);
 
@@ -89,25 +88,19 @@ public class CartServiceImpl implements CartService{
     @Override
     public AddCartItemResponseDto addItemToCart(String customerId, String cartId, CreateCartItemRequestDTO createCartItemRequestDTO) throws BusinessException {
         try {
-            //call customer api
-            CustomerDto customer = customerService.getCustomer(customerId);
+           // call customer api
+           Optional.ofNullable(customerService.getCustomer(customerId))
+                    .orElseThrow(()->new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, customerId));
 
-
-            if (customer == null) {
-                throw new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, customerId);
-            }
             //check cart exist
-            Cart cart = cartRepository.findByCartIdAndCustomerId(Integer.parseInt(cartId), Integer.parseInt(customerId)).orElse(null);
+            Cart cart =  cartRepository.findByCartIdAndCustomerIdOrderByLastModifiedOnDesc(Integer.parseInt(cartId), Integer.parseInt(customerId))
+                    .orElseThrow(()-> new BusinessException(ErrorCode.CART_NOT_FOUND, cartId));
 
-            if (cart == null) {
-                throw new BusinessException(ErrorCode.CART_NOT_FOUND, cartId);
-            }
 
-            ProductDto productDto = productService.getProduct(createCartItemRequestDTO.getProductCode());
+            ProductDto productDto = Optional.ofNullable(productService.getProduct(createCartItemRequestDTO.getProductCode()))
+                    .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, createCartItemRequestDTO.getProductCode()));
+
             //check product availability
-            if (productDto == null) {
-                throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, createCartItemRequestDTO.getProductCode());
-            }
             if (productDto.getAvailableItemCount() < createCartItemRequestDTO.getQuantity()) {
                 throw new BusinessException(ErrorCode.INSUFFICIENT_PRODUCT, createCartItemRequestDTO.getProductCode());
             }
@@ -119,7 +112,6 @@ public class CartServiceImpl implements CartService{
                         .filter(item -> item.getProductCode().equals(createCartItemRequestDTO.getProductCode()))
                         .findFirst()
                         .orElse(null);
-
 
             //create a new cart item if cartItem is null
             Integer quantity = createCartItemRequestDTO.getQuantity();
