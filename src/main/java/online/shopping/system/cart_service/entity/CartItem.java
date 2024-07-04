@@ -6,6 +6,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -56,6 +57,7 @@ public class CartItem {
     private LocalDateTime lastModifiedOn;
 
     @ManyToOne
+    @JoinColumn(name = "cart_id")
     private Cart cart;
 
     @Column(name = "total_price")

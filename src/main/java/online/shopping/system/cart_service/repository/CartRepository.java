@@ -13,5 +13,6 @@ public interface CartRepository extends JpaRepository<Cart, Integer>, JpaSpecifi
 
     Optional<Cart> findFirstByCustomerIdOrderByLastModifiedOnDesc(Integer customerId);
 
-    Optional<Cart> findByCartIdAndCustomerId(Integer cartId, Integer customerId);
+    Optional<Cart> findByCartIdAndCustomerIdOrderByLastModifiedOnDesc(Integer cartId, Integer customerId);
 }
+

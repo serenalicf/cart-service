@@ -24,16 +24,20 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
+    @Autowired
+    private CartMapper cartMapper;
+
+
     @PostMapping("/{customerId}/carts")
     public CartDto createCart(@Validated @PathVariable("customerId") String customerId) throws BusinessException {
         Cart cart = cartService.createCart(customerId);
-        return CartMapper.INSTANCE.cartToCartDto(cart);
+        return cartMapper.toDto(cart);
     }
 
     @GetMapping("/{customerId}/latestcart")
     public CartDto getLatestCart(@Validated @PathVariable("customerId") String customerId) throws BusinessException {
         Cart cart = cartService.getLatestCart(customerId);
-        return CartMapper.INSTANCE.cartToCartDto(cart);
+        return cartMapper.toDto(cart);
     }
 
     @PostMapping("/{customerId}/carts/{cartId}/items")

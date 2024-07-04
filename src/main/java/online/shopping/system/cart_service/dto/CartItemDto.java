@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import online.shopping.system.cart_service.product.dto.ProductDto;
 
 import java.math.BigDecimal;
 
@@ -17,7 +18,7 @@ public class CartItemDto {
 
     private String itemId;
     private int quantity;
-    private ProductDto product;
+    private ProductDto productDto;
     private BigDecimal totalPrice;
 
 }
