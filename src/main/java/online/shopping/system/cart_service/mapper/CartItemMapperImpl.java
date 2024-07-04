@@ -22,7 +22,7 @@ public class CartItemMapperImpl implements CartItemMapper {
         return CartItemDto.builder()
                 .itemId(String.valueOf(cartItem.getItemId()))
                 .quantity(cartItem.getQuantity())
-                .productDto(productService.getProduct(cartItem.getProductCode()))
+                .product(productService.getProduct(cartItem.getProductCode()))
                 .totalPrice(cartItem.getTotalPrice())
                 .build();
     }

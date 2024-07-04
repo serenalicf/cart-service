@@ -18,7 +18,7 @@ public class CartItemDto {
 
     private String itemId;
     private int quantity;
-    private ProductDto productDto;
+    private ProductDto product;
     private BigDecimal totalPrice;
 
 }
