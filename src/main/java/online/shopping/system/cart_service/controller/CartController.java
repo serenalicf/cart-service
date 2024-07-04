@@ -44,9 +44,7 @@ public class CartController {
     public AddCartItemResponseDto addItemToCart(@Validated @PathVariable("customerId") String customerId,
                                                 @Validated @PathVariable("cartId")String cartId,
                                                 @Validated @RequestBody CreateCartItemRequestDTO createCartItemRequestDTO) throws BusinessException {
-
-        AddCartItemResponseDto cartItem = cartService.addItemToCart(customerId, cartId, createCartItemRequestDTO);
-        return cartItem;
+        return cartService.addItemToCart(customerId, cartId, createCartItemRequestDTO);
     }
 
 }
