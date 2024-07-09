@@ -6,18 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddCartItemResponseDto {
+public class CartModificationDto {
 
     private Integer itemId;
-    private Integer quantity;
-    private Integer quantityAdded;
+    private Long quantity;
+    private Long quantityAdded;
     private String productCode;
     private String statusCode;
     private String errorCode;

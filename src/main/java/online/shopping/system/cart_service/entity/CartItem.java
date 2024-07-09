@@ -38,7 +38,7 @@ public class CartItem {
     private Integer itemId;
 
     @Column(name = "quantity")
-    private Integer quantity;
+    private Long quantity;
 
     @Column(name = "price")
     private BigDecimal price;

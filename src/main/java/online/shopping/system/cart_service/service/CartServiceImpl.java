@@ -1,11 +1,10 @@
 package online.shopping.system.cart_service.service;
 
 import lombok.extern.slf4j.Slf4j;
-import online.shopping.system.cart_service.annotation.ValidCustomer;
-import online.shopping.system.cart_service.constant.AddCartStatusCode;
+import online.shopping.system.cart_service.constant.CartStatusCode;
 import online.shopping.system.cart_service.customer.dto.CustomerDto;
 import online.shopping.system.cart_service.customer.service.CustomerService;
-import online.shopping.system.cart_service.dto.AddCartItemResponseDto;
+import online.shopping.system.cart_service.dto.CartModificationDto;
 import online.shopping.system.cart_service.dto.CreateCartItemRequestDTO;
 import online.shopping.system.cart_service.entity.Cart;
 import online.shopping.system.cart_service.entity.CartItem;
@@ -23,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -42,7 +40,7 @@ public class CartServiceImpl implements CartService{
     CartItemRepository cartItemRepository;
     
     @Override
-    public Cart createCart(String customerId) throws BusinessException {
+    public Cart createCart(Integer customerId) throws BusinessException {
         //get latest cart
         Cart cart = getLatestCart(customerId);
 
@@ -50,7 +48,7 @@ public class CartServiceImpl implements CartService{
         if(cart == null) {
             LocalDateTime currentTime = LocalDateTime.now();
             cart = Cart.builder()
-                    .customerId(Integer.parseInt(customerId))
+                    .customerId(customerId)
                     .totalPrice(BigDecimal.valueOf(0.0))
                     .items(new ArrayList<>())
                     .createdOn(currentTime)
@@ -67,14 +65,14 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public Cart getLatestCart(String customerId) throws BusinessException {
+    public Cart getLatestCart(Integer customerId) throws BusinessException {
         try {
 //            call customer api
             CustomerDto customer = Optional.ofNullable(customerService.getCustomer(customerId))
                     .orElseThrow(()->new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, customerId));
 
 
-            return cartRepository.findFirstByCustomerIdOrderByLastModifiedOnDesc(Integer.parseInt(customerId)).orElse(null);
+            return cartRepository.findFirstByCustomerIdOrderByLastModifiedOnDesc(customerId).orElse(null);
 
         } catch (Exception ex){
             if(ex instanceof BusinessException){
@@ -86,14 +84,14 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public AddCartItemResponseDto addItemToCart(String customerId, String cartId, CreateCartItemRequestDTO createCartItemRequestDTO) throws BusinessException {
+    public CartModificationDto addItemToCart(Integer customerId, Integer cartId, CreateCartItemRequestDTO createCartItemRequestDTO) throws BusinessException {
         try {
            // call customer api
            Optional.ofNullable(customerService.getCustomer(customerId))
                     .orElseThrow(()->new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, customerId));
 
             //check cart exist
-            Cart cart =  cartRepository.findByCartIdAndCustomerIdOrderByLastModifiedOnDesc(Integer.parseInt(cartId), Integer.parseInt(customerId))
+            Cart cart =  cartRepository.findByCartIdAndCustomerIdOrderByLastModifiedOnDesc(cartId, customerId)
                     .orElseThrow(()-> new BusinessException(ErrorCode.CART_NOT_FOUND, cartId));
 
 
@@ -114,9 +112,9 @@ public class CartServiceImpl implements CartService{
                         .orElse(null);
 
             //create a new cart item if cartItem is null
-            Integer quantity = createCartItemRequestDTO.getQuantity();
+            Long quantity = createCartItemRequestDTO.getQuantity();
             BigDecimal price = productDto.getPrice();
-            AddCartItemResponseDto addCartItemResponseDto = AddCartItemResponseDto.builder()
+            CartModificationDto addCartItemResponseDto = CartModificationDto.builder()
                     .quantityAdded(createCartItemRequestDTO.getQuantity())
                     .productCode(createCartItemRequestDTO.getProductCode())
                     .build();
@@ -136,27 +134,73 @@ public class CartServiceImpl implements CartService{
                 addCartItemResponseDto.setQuantity(createCartItemRequestDTO.getQuantity());
 
             } else {
-                Integer newQuantity = cartItem.getQuantity() + quantity;
+                Long newQuantity = cartItem.getQuantity() + quantity;
                 cartItem.setQuantity(newQuantity);
                 cartItem.setTotalPrice(BigDecimal.valueOf(newQuantity).multiply(price));
                 addCartItemResponseDto.setItemId(cartItem.getItemId());
                 addCartItemResponseDto.setQuantity(cartItem.getQuantity());
             }
             calulateCart(cart);
-            addCartItemResponseDto.setStatusCode(AddCartStatusCode.SUCCESS.name());
+            addCartItemResponseDto.setStatusCode(CartStatusCode.SUCCESS.name());
             return addCartItemResponseDto;
         } catch (Exception ex){
-            AddCartItemResponseDto addCartItemResponseDto = AddCartItemResponseDto.builder()
+            CartModificationDto cartModificationDto = CartModificationDto.builder()
                     .productCode(createCartItemRequestDTO.getProductCode())
-                    .statusCode(AddCartStatusCode.FAILED.name())
+                    .statusCode(CartStatusCode.FAILED.name())
                     .build();
             if(ex instanceof BusinessException){
-                addCartItemResponseDto.setErrorCode(((BusinessException) ex).getErrorCode());
+                cartModificationDto.setErrorCode(((BusinessException) ex).getErrorCode());
             } else {
                 log.error(ex.getMessage(), ex);
-                addCartItemResponseDto.setErrorCode(ErrorCode.SYSTEM_BUSY.getErrorCode());
+                cartModificationDto.setErrorCode(ErrorCode.SYSTEM_BUSY.getErrorCode());
             }
-            return addCartItemResponseDto;
+            return cartModificationDto;
+        }
+    }
+
+    @Override
+    public CartModificationDto updateCartItemQuantity(Integer customerId, Integer cartId, Integer itemId, Long quantity) {
+        try {
+            Optional.ofNullable(customerService.getCustomer(customerId))
+                    .orElseThrow(() -> new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, customerId));
+            Cart cart = cartRepository.findByCartIdAndCustomerIdOrderByLastModifiedOnDesc(cartId, customerId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND, cartId));
+
+            CartItem cartItem = cartItemRepository.findByItemId(itemId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND, itemId));
+
+            Long originalQuantity = cartItem.getQuantity();
+
+            Long quantityAdded = quantity - originalQuantity;
+
+            if(quantity == 0) {
+               cartItemRepository.delete(cartItem);
+            } else {
+                cartItem.setTotalPrice(BigDecimal.valueOf(quantity).multiply(cartItem.getPrice()));
+                cartItem.setQuantity(quantity);
+            }
+            calulateCart(cart);
+            cartRepository.save(cart);
+            return CartModificationDto.builder()
+                    .itemId(itemId)
+                    .quantity(quantity)
+                    .quantityAdded(quantityAdded)
+                    .productCode(cartItem.getProductCode())
+                    .statusCode(CartStatusCode.SUCCESS.name())
+                    .build();
+
+        } catch (Exception ex){
+            CartModificationDto cartModificationDto = CartModificationDto.builder()
+                    .itemId(itemId)
+                    .statusCode(CartStatusCode.FAILED.name())
+                    .build();
+            if(ex instanceof BusinessException){
+                cartModificationDto.setErrorCode(((BusinessException) ex).getErrorCode());
+            } else {
+                log.error(ex.getMessage(), ex);
+                cartModificationDto.setErrorCode(ErrorCode.SYSTEM_BUSY.getErrorCode());
+            }
+            return cartModificationDto;
         }
     }
 

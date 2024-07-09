@@ -4,6 +4,6 @@ import online.shopping.system.cart_service.customer.dto.CustomerDto;
 
 public interface CustomerService {
 
-    CustomerDto getCustomer(String customerId);
+    CustomerDto getCustomer(Integer customerId);
 
 }

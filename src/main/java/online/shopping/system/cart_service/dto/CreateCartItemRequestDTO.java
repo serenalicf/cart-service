@@ -14,6 +14,6 @@ import lombok.Setter;
 public class CreateCartItemRequestDTO {
 
     private String productCode;
-    private Integer quantity;
+    private Long quantity;
 
 }

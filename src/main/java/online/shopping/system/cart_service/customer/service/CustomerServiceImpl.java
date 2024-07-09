@@ -17,7 +17,7 @@ public class CustomerServiceImpl implements CustomerService{
     RestHelper restHelper;
 
     @Override
-    public CustomerDto getCustomer(String customerId) {
+    public CustomerDto getCustomer(Integer customerId) {
         return restHelper.getObject(customerRestUri + "/customers/" + customerId, CustomerDto.class);
     }
 

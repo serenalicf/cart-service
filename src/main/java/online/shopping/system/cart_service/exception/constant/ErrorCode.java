@@ -17,7 +17,8 @@ public enum ErrorCode implements ExceptionCode {
 
     PRODUCT_NOT_FOUND("C004", "product with product code : {} is not found"),
 
-    INSUFFICIENT_PRODUCT("C005", "product with product code : {} is not sufficient");
+    INSUFFICIENT_PRODUCT("C005", "product with product code : {} is not sufficient"),
+    CART_ITEM_NOT_FOUND("C006","item with item id : {} is not found" );
 
     private final String errorCode;
     private final String message;

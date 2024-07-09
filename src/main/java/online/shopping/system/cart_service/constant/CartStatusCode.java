@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum AddCartStatusCode {
+public enum CartStatusCode {
     SUCCESS,
     FAILED;
 }
