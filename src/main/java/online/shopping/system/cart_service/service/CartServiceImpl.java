@@ -68,8 +68,8 @@ public class CartServiceImpl implements CartService{
     public Cart getLatestCart(Integer customerId) throws BusinessException {
         try {
 //            call customer api
-            CustomerDto customer = Optional.ofNullable(customerService.getCustomer(customerId))
-                    .orElseThrow(()->new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, customerId));
+//            CustomerDto customer = Optional.ofNullable(customerService.getCustomer(customerId))
+//                    .orElseThrow(()->new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, customerId));
 
 
             return cartRepository.findFirstByCustomerIdOrderByLastModifiedOnDesc(customerId).orElse(null);
